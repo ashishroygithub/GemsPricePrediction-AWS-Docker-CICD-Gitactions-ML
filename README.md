@@ -13,16 +13,16 @@
 * `Step 3` : Activate the virtual environment: `conda activate venv/`
 
 * `Step 4` : `Next process is to clone the entire repository so that we are able to commit our code.`
-    * echo "#GemsPricePrediction-Azure-GithubActions-ML" >> README.md
+    * echo "# GemsPricePrediction-AWS-Docker-CICD-Gitactions-ML" >> README.md
     * git init
     * git add README.md
     * git commit -m "first commit"
     * git branch -M main
-    * git remote add origin https://github.com/ashishroygithub/GemsPricePrediction-Azure-GithubActions-ML.git
+    * git remote add origin https://github.com/ashishroygithub/GemsPricePrediction-AWS-Docker-CICD-Gitactions-ML.git
     * git push -u origin main
 
 * `Step 5` : `For Existing Repository:`
-    * git remote add origin https://github.com/ashishroygithub/GemsPricePrediction-Azure-GithubActions-ML.git
+    * git remote add origin https://github.com/ashishroygithub/GemsPricePrediction-AWS-Docker-CICD-Gitactions-ML.git
     * git branch -M main
     * git push -u origin main
 
@@ -95,8 +95,6 @@
 
 ### Introduction About the Data :
 
-Please this project is of a student. Just wanted to appreciate for knowledge sharing 
-
 **The dataset** The goal is to predict `price` of given diamond (Regression Analysis).
 
 There are 10 independent variables (including `id`):
@@ -125,28 +123,53 @@ Dataset Source Link :
 ### ALWAYS Run "pip install -e ." this will trigger the setup file. 
 
 
-##### DEPLOYMENT - AZURE + GITHUB ACTIONS
+##### DEPLOYMENT - AWS - DOCKER - GIT ACTIONS - AWS (Elastic Container Storage)
 
-* `Step 1` : Build Environment on Azure > portal.azure.com > Login with Credentials > click on '+' Symbol (create a resource) > webapp > create > Fill in all the details
+* `Step 1` : Here we will be building the deployment using EC2 Insatance and Elastic Container Registry
   
-        * Subscription > If you have any then click on that, if not go with pay as you go.
-  
-        * Resource Group Name > Create New > testgroupprojects
-  
-        * Instance Details > Name > gemspriceprediction
-  
-        * Instance Details > Publish > code and later we can also push this using dockers.
-  
-        * Choose your free tier in the region (## IMPORTANT :  free tier does not support github actions, either go for basic or premium tier.)
-  
-        * Runtime stack > Python 3.8 > (Then click on next)
-  
-        * GitHub action settings > enable > add account/ change account > organization = ashishroygithub > select repository on which you want to push this. > branch : main.
-  
-        * Review + Create
+    * First we need to create a Docker file.
 
-  A new github workflow folder will be created.
+        * `FROM python:3.8-slim-buster`  # This will help us to fetch the base image from docker hub which is already present.
+        * `WORKDIR /app` # This will help in creating a working directory from where the code needs to be run when creating an image on top of the base image.
+        * `COPY . /app` # This will help in copying all the files from the local to the app folder for which the base image is going to be created on docker
+        * `RUN apt update -y && apt install awscli -y` # This command will help us in updating all the packages before we deploy and also it will install the Amazon Web Services Command Line Interface
+        * `RUN pip install -r requirements.txt` # This command will help us in updating all the dependencies and requirement.
+        * `CMD ["python3", "app.py"]` # This is the command which will be used to run the app.py file, and python3 will help the interface to understand that we are running it on python 3.8 version.
 
+    * Now we need to check if the build happens or not (in the command prompt type as below)
+        - first open docker desktop
+        - `docker images` # This will help to show what are all the images that are present.
+        - `docker build -t ashishroy29/gemspricepred-app .` # This will help to build a image for the same
+        - `docker run -p 8080:8080 ashishroy29/gemspricepred-app` # This command will help us to set 2 important info host port and container port which is crucial to connect to the web or even to run the application.
+        - `docker push ashishroy29/gemspricepred-app:latest` # This will help to push the latest image into repository with that latest tag, latest is nothing but the tag, which you can go to the docker hub and find it.
+        - `docker image rm -f ashishroy29/gemspricepred-app` # This will help remove the image from the container
+        
+
+* `Step 2` : We will be creating a ***Github actions workflow*** which will help in deploying the same onto the ECR and then to EC2 instance.
+
+    * Creating `main.yaml` file.
+        - This is where the entire workflow deployment will happen and this is the file where the Entire CI/CD (Continous Integration and Continous Deployment process takes place)
+        - whenever there is a push happening on the main branch, this gets triggered and the workflow starts (3 steps takes place here)
+        - jobs > integration > build-and-push-ecr-image > finally Contionous-Deployment. (these steps are important)
+        - Ecr is a private repository in AWS, unlike docker hub where you can allow anyone to download the image. (ECR is majorly used by organisations)
+        - ECR - Elastic Container Repository - Fully-Managed Docker container to store, Manage and deploy Images.
+        - Docker Image > Pushed to ECR > Pushed to EC2 Instance.
+        - `Integration Steps` : Eg : Continous Integration > runs on Ubuntu-Latest (can be any OS) > Checks out code > Lints Repository > Run Unit Tests.
+        - `build-and-push-ecr-image` : Eg : Contionus Delivery > Needs step of Integration to run successfully > check code from github > isntall libraries/Update packages > configure aws credentials > accesskey/secretaccesskey > login to ECR from the credentials > build tag and push image to ECR. (needs output registry and Repository name)
+        - `Continous Deployment`: Eg : build-and-push-ecr-image > this image will run as self-hosted app runner after giving certain permissions > credentials > login to ecr >
+        pull the latest image > do the deployement in the ec2 instance in port 8080.
+
+    * How to generate `main.yaml` file.
+        - Go to your Github Account
+        - Click on the repository you are creating your project on
+        - Click on Actions
+        - Click on New Workflow
+        - Click on Deploy to Amazon ECS
+        - Click on Configure
+        - Now change the github actions yaml file accoding to the CI/CD Pipelines.
+        - copy the code and paste it over here, first create a folder ".github" and a folder inside that "workflows" and then create "main.yaml"
+
+* `Step 3` : We will be setting up a ***AWS IAM user account for self-hosted app service*** which will help in deploying the same onto the ECR and then to EC2 instance.
 
 # Azure Deployment Link :
 
