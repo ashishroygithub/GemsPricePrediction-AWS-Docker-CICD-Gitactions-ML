@@ -13,16 +13,16 @@
 * `Step 3` : Activate the virtual environment: `conda activate venv/`
 
 * `Step 4` : `Next process is to clone the entire repository so that we are able to commit our code.`
-    * echo "#GemsPricePrediction-AWS-ElasticBeanStalk-Codepipeline" >> README.md
+    * echo "#GemsPricePrediction-Azure-GithubActions-ML" >> README.md
     * git init
     * git add README.md
     * git commit -m "first commit"
     * git branch -M main
-    * git remote add origin https://github.com/ashishroygithub/GemsPricePrediction-AWS-ElasticBeanStalk-Codepipeline.git
+    * git remote add origin https://github.com/ashishroygithub/GemsPricePrediction-Azure-GithubActions-ML.git
     * git push -u origin main
 
 * `Step 5` : `For Existing Repository:`
-    * git remote add origin https://github.com/ashishroygithub/GemsPricePrediction-AWS-ElasticBeanStalk-Codepipeline.git
+    * git remote add origin https://github.com/ashishroygithub/GemsPricePrediction-Azure-GithubActions-ML.git
     * git branch -M main
     * git push -u origin main
 
@@ -52,6 +52,16 @@
 * `Step 2` : If you are getting permission denied response then you can use the below to solve the issue.
 
     * git remote set-url origin https://user_name@github.com/username/repository_name.git
+ 
+* `Step 3` : Scenario : If you are creating a new folder with a different project and you want to create another new repository and clone another new local repository. What do you do?
+     * git remote -v (here you need to check which repository is reflecting, if the old_repository is reflecting then go to the next step)
+     * git remote set-url origin https://user_name@github.com/username/new_repository_name.git
+     * git remote -v
+     * git init
+     * git remote add origin https://github.com/ashishroygithub/new_repository_name.git
+     * git branch -M main
+     * git push -u origin main
+     * git status
 
 ##### MAPPING HAS BEEN COMPLETED.
 
@@ -115,19 +125,32 @@ Dataset Source Link :
 ### ALWAYS Run "pip install -e ." this will trigger the setup file. 
 
 
-##### DEPLOYMENT - AWS - ELASTIC BEAN STALK + CODEPIPELINE
+##### DEPLOYMENT - AZURE + GITHUB ACTIONS
 
-* `Step 1` : Build Environment on Elastic Bean stock > create application > create Environment > choose Python > 3.8 > create Environment
+* `Step 1` : Build Environment on Azure > portal.azure.com > Login with Credentials > click on '+' Symbol (create a resource) > webapp > create > Fill in all the details
+  
+        * Subscription > If you have any then click on that, if not go with pay as you go.
+  
+        * Resource Group Name > Create New > testgroupprojects
+  
+        * Instance Details > Name > gemspriceprediction
+  
+        * Instance Details > Publish > code and later we can also push this using dockers.
+  
+        * Choose your free tier in the region (## IMPORTANT :  free tier does not support github actions, either go for basic or premium tier.)
+  
+        * Runtime stack > Python 3.8 > (Then click on next)
+  
+        * GitHub action settings > enable > add account/ change account > organization = ashishroygithub > select repository on which you want to push this. > branch : main.
+  
+        * Review + Create
 
-* `Step 2` : Build A code Pipeline : Give Pipeline name > choose source provider (Github) > Connect your github > choose your repo and branch > skip build stage > Deploy provider (choose Elastic bean stock and fill in the info) > Create Pipeline.
+  A new github workflow folder will be created.
 
 
-#### IMPORTANT : .ebextensions is very important folder as it contains python.config file and it helps to push it to the EBS platform (and change app.py to application.py)
+# Azure Deployment Link :
 
-
-# AWS Deployment Link :
-
-AWS Elastic Beanstalk link : [http://gemstonepriceprediction-mlprojec-env.eba-hm32pq3a.ap-south-1.elasticbeanstalk.com/](http://gemstonepriceprediction-mlprojec-env.eba-hm32pq3a.ap-south-1.elasticbeanstalk.com/)
+Azure link : [https://gemsstonepriceprediction.azurewebsites.net/](https://gemsstonepriceprediction.azurewebsites.net/)
 
 
 # Screenshot of UI
@@ -138,6 +161,16 @@ AWS Elastic Beanstalk link : [http://gemstonepriceprediction-mlprojec-env.eba-hm
 # Postman Testing of API :
 
 ![API Prediction](./screenshots/APIPrediction.jpg)
+
+
+# Azure Web App Summary
+
+![GempricepredictionDeployementSummary](./screenshots/GempricepredictionDeployementSummary.jpg)
+
+
+# Github Actions UI
+
+![GithubactionsSummaryPage](./screenshots/GithubactionsSummaryPage.jpg)
 
 
 # Approach for the project 
