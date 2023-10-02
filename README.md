@@ -169,7 +169,89 @@ Dataset Source Link :
         - Now change the github actions yaml file accoding to the CI/CD Pipelines.
         - copy the code and paste it over here, first create a folder ".github" and a folder inside that "workflows" and then create "main.yaml"
 
-* `Step 3` : We will be setting up a ***AWS IAM user account for self-hosted app service*** which will help in deploying the same onto the ECR and then to EC2 instance.
+* `Step 3` : We will be setting up a ***AWS IAM user account for self-hosted app service*** which will help in deploying the same onto the ECR and then to EC2 instance using the credentials.
+
+    * Creating `IAM user` in AWS.
+        - go to console aws.com
+        - login with root user.
+        - Click on IAM in search bar (Identity and Access Management)
+        - IAM is basically used to give the permission to self-deploy the application using CI/CD.
+        - Click on Create User (ashishroycicd) > Next
+        - Click on Attach Policies Directly > search for "AmazonEC2ContainerRegistryFullAccess" > Add this policy.
+        - search for another policy "AmazonEC2FullAccess" > Add this policy > Next
+        - Click Create User
+
+    * After Creating user
+        - search > IAM > ashishroycicd > Security credentials
+        - Create Access key
+        - Command Line Interface > Next
+        - Create access key
+        - download the csv
+        - Done
+
+    * Search for ECR
+        - Create Repository
+        - Private
+        - Repository name = gemsstonepricepred
+        - Create the repository.
+        - Copy the URI/URI
+        - 049693961480.dkr.ecr.ap-south-1.amazonaws.com/gemsstonepricepred
+        
+    * search for EC2 Instance
+        - Launch an Instance
+        - give name to the web app
+        - click on ubuntu OS > 64-bit
+        - click on the medium requirements and then later delete the instance
+        - click on keypair select required
+        - Create security group, All everything - SSH, HTTPS, HTTP traffic.
+        - Launch Instance
+
+    * After the instance is launched
+        - click on Instance ID.
+        - click on connect on top
+        - EC2 Instance Connect > Click on Connect
+    
+    * Setup Docker in EC2
+        - `clear` (To clear screen)
+        - `sudo apt-get update -y` (to get update on all the packages and indexed properly)
+        - `sudo apt-get upgrade` (just setting up server)
+        - `curl -fsSL https://get.docker.com -o get-docker.sh` (installing all the Docker packages setups in regards to docker)
+        - `sudo sh get-docker.sh` (all admin access is provided)
+        - `sudo usermod -aG docker ubuntu` (so that we dont have to write sudo all the time we write command)
+        - `newgrp docker` creating a new group called as docker.
+
+    * Checking if docker is running:
+        - type docker in awscli
+        - docker image > ECR > installed in EC2 instance
+
+* `Step 4` : We will be setting up a ***GITHUB Runner*** which will help in deploying when there is a code commit in the main repository (Automatically)
+    
+    * Github Runners Setup
+        - Go to your repo on github > settings > actions > Runners
+        - Click New self-hosted runner
+        - Linux
+        - Execute the line of codes in Aws CLI
+        - Just press enter for default runner group after running all the commands.
+        - runner name : self-hosted
+        - no extra labels, just press enter
+        - just press enter for work folder
+        - now after all the details click on run.sh
+        - now you can see in github actions and in runners, there is an App runner created with the name self-hosted which would be in an idle state
+
+* `Step 5` : We will be setting up a ***GITHUB Secret Keys for the jobs or the runner to work*** which will help in authentication.
+
+    * Setting up AWS keys for the self-hosted app service on github.
+
+        - Go to the Repository you are workin on.
+        - Click on settings
+        - Click on Secrets and variables > Click on Actions
+        - Delete all the previous keys if present
+        - Now we need to add 5 things: > Add New repository secrets
+            `AWS_ACCESS_KEY_ID` (This you can find inside the csv file which was downloaded)
+            `AWS_SECRET_ACCESS_KEY` (This you can find inside the csv fike which was downloaded)
+            `AWS_REGION` (This you can find in the aws console "ap-south-1" this depends)
+            `AWS_ECR_LOGIN_URI` (This you can find inside the instance of ECR which you created earlier)
+            `ECR_REPOSITORY_NAME` (you need to give the name of the repository which got created during the ECR creation)
 
 # Azure Deployment Link :
 
