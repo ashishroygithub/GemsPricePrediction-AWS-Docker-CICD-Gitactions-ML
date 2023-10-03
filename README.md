@@ -222,7 +222,7 @@ Dataset Source Link :
 
     * Checking if docker is running:
         - type docker in awscli
-        - docker image > ECR > installed in EC2 instance
+        - docker image > ECR > installed in EC2 instance (These are steps of Execution)
 
 * `Step 4` : We will be setting up a ***GITHUB Runner*** which will help in deploying when there is a code commit in the main repository (Automatically)
     
@@ -230,6 +230,7 @@ Dataset Source Link :
         - Go to your repo on github > settings > actions > Runners
         - Click New self-hosted runner
         - Linux
+        - You will find a list of commands over there
         - Execute the line of codes in Aws CLI
         - Just press enter for default runner group after running all the commands.
         - runner name : self-hosted
@@ -253,9 +254,30 @@ Dataset Source Link :
             `AWS_ECR_LOGIN_URI` (This you can find inside the instance of ECR which you created earlier)
             `ECR_REPOSITORY_NAME` (you need to give the name of the repository which got created during the ECR creation)
 
-# Azure Deployment Link :
+* `Step 6` : Now we will have to all the network access to the ***Network port*** which has been mentioned (In our case it is 8080)
+    
+    * Step by step Allowing access
 
-Azure link : [https://gemsstonepriceprediction.azurewebsites.net/](https://gemsstonepriceprediction.azurewebsites.net/)
+        - Go to console.aws
+        - Search for EC2 instance
+        - click on the instance ID of the instance you want to choose
+        - Click on the security
+        - Click on security groups
+        - edit inbound rules
+        - add new inbound rule
+        - Type - Custom TCP
+        - Protocol - TCP
+        - Port Range - 8080 (this is the port which is mentioned in the app port/ host port / container port)
+        - source type - Anywhere-IPv4
+        - source - 0.0.0.0/0
+        - Now copy the Public IPv4 address 13.126.166.91
+        - Along with that add the port number 8080
+        - Eg : 13.126.166.91:8080
+        - This should start working now 
+
+# AWS - Github Workflow - Docker CI/CD - Deployment Link :
+
+AWS - Github Workflow - Docker CI/CD link : [http://13.126.166.91:8080/predict](http://13.126.166.91:8080/predict)
 
 
 # Screenshot of UI
@@ -268,14 +290,34 @@ Azure link : [https://gemsstonepriceprediction.azurewebsites.net/](https://gemss
 ![API Prediction](./screenshots/APIPrediction.jpg)
 
 
-# Azure Web App Summary
+# AWS EC2 Instance Web App Summary
 
-![GempricepredictionDeployementSummary](./screenshots/GempricepredictionDeployementSummary.jpg)
+![EC2InstanceSummaryScreenshot](./screenshots/EC2InstanceSummaryScreenshot.jpg)
 
 
-# Github Actions UI
+# AWS-CLI-Interface
 
-![GithubactionsSummaryPage](./screenshots/GithubactionsSummaryPage.jpg)
+![AWS-CLI-Interface](./screenshots/AWS-CLI-Interface.jpg)
+
+
+# GithubActionsWorkflowPage
+
+![GithubActionsWorkflowPage](./screenshots/GithubActionsWorkflowPage.jpg)
+
+
+# GithubRunnersInterface
+
+![GithubRunnersInterface](./screenshots/GithubRunnersInterface.jpg)
+
+
+# GithubWorkflowDeploymentSummary
+
+![GithubWorkflowDeploymentSummary](./screenshots/GithubWorkflowDeploymentSummary.jpg)
+
+
+# SecretsandVariablesSummary
+
+![SecretsandVariablesSummary](./screenshots/SecretsandVariablesSummary.jpg)
 
 
 # Approach for the project 
